@@ -23,7 +23,7 @@ namespace DataAccess.Extensions
 
             if (environmentName == "Development")
             {
-                credential = new DefaultAzureCredential();
+                credential = new AzureCliCredential();
             }
             else
             {
