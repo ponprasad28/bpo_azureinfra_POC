@@ -1,1 +1,92 @@
 .vs/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Ignore all bin and obj folders recursively
+**/bin/
+**/obj/
+.vs/
+
+
+
+# .NET Core & .NET 5/6/7/8 artifacts
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Enable "publish" folder ignore
+[Pp]ublish/
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+
+# Rider
+.idea/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Others
+*.dbmdl
+*.bak
+*.backup
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+
+# Entity Framework
+Migrations/
+
+# DotCover
+.idea/
+*.dotCover
+
+# Azure Functions
+local.settings.json
+
+# Windows crash dumps
+*.dmp
+
+# Optional: ignore test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Optional: ignore ReSharper & Rider
+_ReSharper*/
+*.DotSettings.user
+*.sln.iml
+
+# Ignore .NET CLI hidden folders
+**/.vs/
+
+# Ignore IIS Express config
+*.vspscc
+*.vssscc
+
+# JetBrains Rider
+.idea/
+
+# Optional cache folders
+*.cache/
