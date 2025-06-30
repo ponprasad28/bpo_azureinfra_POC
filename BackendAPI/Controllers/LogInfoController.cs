@@ -26,5 +26,13 @@ namespace BackendAPI.Controllers
             await _logInfoService.AddAsync(logInfo);
             return Ok(new { message = "LogInfo saved successfully" });
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<LogInfo>>> GetAll()
+        {
+            var logs = await _logInfoService.GetAllAsync();
+            return Ok(logs);
+        }
+
     }
 }

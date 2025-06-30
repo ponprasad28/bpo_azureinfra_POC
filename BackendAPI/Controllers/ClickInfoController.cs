@@ -25,5 +25,12 @@ namespace BackendAPI.Controllers
             await _clickInfoService.AddAsync(clickInfo);
             return Ok(new { message = "ClickInfo saved successfully" });
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<ClickInfo>>> GetAll()
+        {
+            var clicks = await _clickInfoService.GetAllAsync();
+            return Ok(clicks);
+        }
     }
 }
