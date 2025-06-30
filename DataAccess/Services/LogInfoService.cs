@@ -28,9 +28,5 @@ namespace DataAccess.Services
             _context.LogInfos.Add(log);
             await _context.SaveChangesAsync();
         }
-
-
-
-
     }
 }
