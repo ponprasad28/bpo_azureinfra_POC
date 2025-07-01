@@ -1,19 +1,67 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../authConfig";
+import { LogInfoDTO } from "../DTO/LogInfoDTO";
 
 const ProtectedPage = () => {
-  const { accounts } = useMsal();
-  const user = accounts[0];
-  
+  const {instance, accounts } = useMsal();
+  const [logins, setLogins] = useState<LogInfoDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await instance.acquireTokenSilent({
+          ...loginRequest,
+          account: accounts[0],
+        });
+
+        const response = await fetch("https://backendbpo-atcjd6ahftgyejcu.canadacentral-01.azurewebsites.net/api/loginfo", {
+          headers: {
+            Authorization: `Bearer ${result.accessToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await response.json();
+        setLogins(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [instance, accounts]);
+
   return (
     <div>
-      <h2>Welcome to the Protected Page!</h2>
-      {user && (
-        <p>
-          Hello, <strong>{user.name}</strong> ({user.username})
-        </p>
+      {loading ? (
+        <p>Loading data...</p>
+      ) : (
+        <table border={1} cellPadding={8} style={{ width: "100%", marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Login Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {logins.map((log, index) => (
+              <tr key={index}>
+                <td>{log.userName}</td>
+                <td>{log.userEmail}</td>
+                <td>{new Date(log.loginTime).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
-      <p>You can only see this if you're logged in.</p>
     </div>
   );
 };
