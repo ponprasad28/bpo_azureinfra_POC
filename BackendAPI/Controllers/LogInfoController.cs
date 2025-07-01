@@ -1,5 +1,7 @@
-﻿using DataAccess.Models;
+﻿using AutoMapper;
+using DataAccess.Models;
 using DataAccess.Services;
+using DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,28 +13,31 @@ namespace BackendAPI.Controllers
     public class LogInfoController : ControllerBase
     {
         private readonly ILogInfoService _logInfoService;
-
-        public LogInfoController(ILogInfoService logInfoService)
+        private readonly IMapper _mapper;
+        public LogInfoController(ILogInfoService logInfoService, IMapper mapper)
         {
             _logInfoService = logInfoService;
+            _mapper = mapper;
+
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] LogInfo logInfo)
+        public async Task<IActionResult> Post([FromBody] LogInfoDTO logInfo)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            var model = _mapper.Map<LogInfo>(logInfo);
 
-            await _logInfoService.AddAsync(logInfo);
+            await _logInfoService.AddAsync(model);
             return Ok(new { message = "LogInfo saved successfully" });
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LogInfo>>> GetAll()
+        public async Task<ActionResult<List<LogInfoDTO>>> GetAll()
         {
-            var logs = await _logInfoService.GetAllAsync();
-            return Ok(logs);
+            var models = await _logInfoService.GetAllAsync();
+            var dtos = _mapper.Map<List<LogInfoDTO>>(models);
+            return Ok(dtos);
         }
 
     }

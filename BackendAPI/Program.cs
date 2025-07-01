@@ -1,3 +1,4 @@
+using BackendAPI;
 using DataAccess.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -11,6 +12,8 @@ builder.Services.AddDataAccess(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
     builder.Environment.EnvironmentName,
     builder.Configuration);
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));

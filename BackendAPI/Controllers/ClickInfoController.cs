@@ -1,5 +1,7 @@
-﻿using DataAccess.Models;
+﻿using AutoMapper;
+using DataAccess.Models;
 using DataAccess.Services;
+using DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,27 +14,32 @@ namespace BackendAPI.Controllers
     public class ClickInfoController : ControllerBase
     {
         private readonly IClickInfoService _clickInfoService;
+        private readonly IMapper _mapper;
 
-        public ClickInfoController(IClickInfoService clickInfoService)
+        public ClickInfoController(IClickInfoService clickInfoService, IMapper mapper)
         {
             _clickInfoService = clickInfoService;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ClickInfo clickInfo)
+        public async Task<IActionResult> Post([FromBody] ClickInfoDTO clickInfo)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _clickInfoService.AddAsync(clickInfo);
+            var model = _mapper.Map<ClickInfo>(clickInfo);
+
+            await _clickInfoService.AddAsync(model);
             return Ok(new { message = "ClickInfo saved successfully" });
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ClickInfo>>> GetAll()
+        public async Task<ActionResult<List<ClickInfoDTO>>> GetAll()
         {
-            var clicks = await _clickInfoService.GetAllAsync();
-            return Ok(clicks);
+            var models = await _clickInfoService.GetAllAsync();
+            var dtos = _mapper.Map<List<ClickInfoDTO>>(models);
+            return Ok(dtos);
         }
     }
 }

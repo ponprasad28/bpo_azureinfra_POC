@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 using RevitCapp.Commands;
 using System.Windows.Input;
 using System.Windows;
+using RevitCapp.Model;
 
 namespace RevitCapp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private readonly ApiCaller _apiCaller = new ApiCaller();
+
         private bool _isAuthenticated;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -35,8 +38,8 @@ namespace RevitCapp.ViewModels
             }
         }
 
-        private string _user;
-        public string User
+        private User _user;
+        public User User
         {
             get => _user;
             set
@@ -84,14 +87,14 @@ namespace RevitCapp.ViewModels
         private async void LogOut()
         {
             await AzureAuthHelper.Instance.SignOutAsync();
-            MessageBox.Show($"SignedOut User {User}");
-            User = String.Empty;
+            MessageBox.Show($"SignedOut User {User.Name}");
+            User = new User("", "");
             IsAuthenticated = false;
         }
 
-        private void Click()
+        private async void Click()
         {
-            
+            await _apiCaller.PostClickInfoAsync(User.Name, User.UserEmail);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>

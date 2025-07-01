@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
+using RevitCapp.Model;
 
 namespace RevitCapp
 {
@@ -82,9 +84,22 @@ namespace RevitCapp
             return _authResult.AccessToken;
         }
 
-        public string GetSignedInUser()
+        public User GetSignedInUser()
         {
-            return _authResult?.Account?.Username;
+            if (_authResult == null)
+                return null;
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(_authResult.IdToken);
+
+            var email = token.Claims.FirstOrDefault(c =>
+                c.Type == "preferred_username" || c.Type == "email")?.Value;
+
+            var name = token.Claims.FirstOrDefault(c =>
+                c.Type == "name")?.Value;
+
+            return new User(name, email);
+
         }
         public async Task SignOutAsync()
         {
