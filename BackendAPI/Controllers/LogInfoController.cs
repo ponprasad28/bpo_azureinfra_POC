@@ -1,12 +1,13 @@
 ﻿using DataAccess.Models;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendAPI.Controllers
 {
+    [Authorize(Policy = "AccessAsUser")]
     [ApiController]
     [Route("api/[controller]")]
-
     public class LogInfoController : ControllerBase
     {
         private readonly ILogInfoService _logInfoService;

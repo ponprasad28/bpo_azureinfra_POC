@@ -1,9 +1,11 @@
 ﻿using DataAccess.Models;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendAPI.Controllers
 {
+    [Authorize(Policy = "AccessAsUser")]
     [ApiController]
     [Route("api/[controller]")]
 

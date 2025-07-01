@@ -1,4 +1,8 @@
 using DataAccess.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +11,24 @@ builder.Services.AddDataAccess(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
     builder.Environment.EnvironmentName,
     builder.Configuration);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AccessAsUser", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context =>
+            context.User.HasClaim(c =>
+                (c.Type == "http://schemas.microsoft.com/identity/claims/scope" ||
+                 c.Type == "scp") &&
+                c.Value.Split(' ').Contains("access_as_user"))
+        );
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,6 +46,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
