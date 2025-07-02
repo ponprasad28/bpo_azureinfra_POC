@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using RevitCapp;
 using System.Data;
 using DTOs;
+using DTOs.Enum;
 
 namespace RevitCapp
 {
@@ -48,6 +49,7 @@ namespace RevitCapp
                 UserName = userName,
                 UserEmail = userEmail,
                 ClickTime = DateTime.UtcNow
+                
             };
 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
@@ -65,5 +67,36 @@ namespace RevitCapp
                 }
             }
         }
+
+
+        public async Task<string> PostLogInfoAsync(string userName, string userEmail)
+        {
+            var token = await AzureAuthHelper.Instance.GetAccessTokenAsync();
+
+            var dto = new LogInfoDTO
+            {
+                UserName = userName,
+                UserEmail = userEmail,
+                LoginTime = DateTime.UtcNow,
+                LoginFrom = ClientAppDTO.Revit
+            };
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/LogInfo"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Content = content;
+
+                using (var response = await _httpClient.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
+        }
+
+
     }
 }

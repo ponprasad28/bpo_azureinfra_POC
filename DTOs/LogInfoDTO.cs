@@ -9,6 +9,6 @@ namespace DTOs
         public string UserEmail { get; set; }
         public DateTime LoginTime { get; set; } = DateTime.UtcNow;
         public ClientAppDTO LoginFrom { get; set; } = ClientAppDTO.Revit;
-
+        
     }
 }

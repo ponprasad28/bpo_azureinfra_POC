@@ -1,6 +1,10 @@
 import React from "react";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { useNavigate } from "react-router-dom";
+import { loginRequest } from "../authConfig";
+import { LogInfoDTO } from "../DTO/LogInfoDTO";
+import { getAccessToken, getSignedInUser } from "../auth/msalHelper";
+
 
 const Navbar = () => {
   const { instance } = useMsal();
@@ -10,7 +14,39 @@ const Navbar = () => {
   const handleLogin = async () => {
     try {
       await instance.loginPopup();
+
+      const user = getSignedInUser();
+      if (!user) throw new Error("User not found after login");
+
+      const accessToken = await getAccessToken();
+
+      const dto = {
+        userName: user.name ?? user.username,
+        userEmail: user.username,
+        loginTime: new Date().toISOString(),
+        loginFrom: 2
+      };
+
+      const response = await fetch("https://backendbpo-atcjd6ahftgyejcu.canadacentral-01.azurewebsites.net/api/loginfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(dto)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Backend error: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.text();
+      console.log("Backend response:", result);
+
+
       navigate("/protected"); // Redirect to protected page after login
+
     } catch (error) {
       console.error("Login failed", error);
     }

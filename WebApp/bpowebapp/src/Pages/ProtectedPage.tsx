@@ -49,6 +49,7 @@ const ProtectedPage = () => {
               <th>User Name</th>
               <th>Email</th>
               <th>Login Time</th>
+              <th>Login From</th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +58,7 @@ const ProtectedPage = () => {
                 <td>{log.userName}</td>
                 <td>{log.userEmail}</td>
                 <td>{new Date(log.loginTime).toLocaleString()}</td>
+                <td>{log.loginFrom === 1 ? 'Revit' : 'Website'}</td>
               </tr>
             ))}
           </tbody>

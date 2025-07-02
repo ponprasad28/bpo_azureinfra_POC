@@ -72,6 +72,7 @@ namespace RevitCapp.ViewModels
                 {
                     IsAuthenticated = true;
                     User = AzureAuthHelper.Instance.GetSignedInUser();
+                    await _apiCaller.PostLogInfoAsync(User.Name, User.UserEmail);
                 }
                 else
                 {
